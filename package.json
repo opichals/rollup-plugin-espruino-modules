@@ -1,0 +1,13 @@
+{
+  "name": "rollup-plugin-espruino-modules",
+  "version": "0.0.1",
+  "description": "Provides Espruino Rollup Support",
+  "main": "index.js",
+  "author": "opichals@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "rollup-plugin-commonjs": "^9.1.6",
+    "rollup-plugin-espruino": "^0.2.1",
+    "rollup-plugin-terser": "^2.0.2"
+  }
+}
