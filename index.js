@@ -8,6 +8,7 @@ const defaultOptions = {
     output: {
         format: 'cjs',
         exports: null,
+        freeze: false,
         interop: false,
         strict: false
     }
