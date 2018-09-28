@@ -20,12 +20,28 @@ const httpGET = (url, callback) => https.get(url, res => {
     res.on('end', () => callback(null, rawData));
 });
 
-const fetchEspruinoBoardJSON = function(boardName, callback) {
-    httpGET(`https://www.espruino.com/json/${boardName}.json`, callback);
+const fetchEspruinoBoardJSON = function(boardName, options, callback) {
+    const boardJsonUrl = options.job.BOARD_JSON_URL || "http://www.espruino.com/json";
+    httpGET(`${boardJsonUrl}/${boardName}.json`, callback);
 };
 
-const fetchEspruinoModule = function(moduleName, callback) {
-    httpGET(`https://www.espruino.com/modules/${moduleName}.js`, callback);
+const fetchEspruinoModule = function(moduleName, options, callback) {
+    const moduleUrl = options.job.MODULE_URL || 'https://www.espruino.com/modules';
+    const moduleExts = options.job.MODULE_EXTENSIONS.split('|')
+        .filter(ext => !(options.minifyModules === false && ext.match('min.js')));
+
+    function fetchModule(exts, cb) {
+        const ext = exts.shift();
+        httpGET(`${moduleUrl}/${moduleName}${ext}`, (err, code) => {
+            if (err && exts.length) {
+                fetchModule(exts, cb);
+                return;
+            }
+            cb(err, code);
+        });
+    }
+
+    fetchModule(moduleExts, callback);
 };
 
 
