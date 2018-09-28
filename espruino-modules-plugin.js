@@ -44,10 +44,9 @@ function espruinoModules(options) {
 		resolveId(importee, importer) {
             // console.log('resolve', importee, importer);
 
-            // disregard entry module
-            if ( !importer ) return null;
-            // disregard relative imports
-            if ( importee.charAt(0) === '.' ) return null;
+            // external modules (non-entry modules that start with neither '.' or '/')
+            // are skipped at this stage.
+            if (importer === undefined || path.isAbsolute(importee) || importee[0] === '.') return null;
 
             return plugin._opts._boardJSON.then(boardJSON => {
                 if (boardJSON.info.builtin_modules.indexOf(importee) >= 0) {
