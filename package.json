@@ -6,9 +6,10 @@
   "author": "opichals@gmail.com",
   "license": "MIT",
   "dependencies": {
+    "@babel/code-frame": "^7.0.0",
     "rollup-plugin-commonjs": "^9.1.6",
     "rollup-plugin-espruino": "^0.2.1",
-    "@babel/code-frame": "^7.0.0",
+    "rollup-plugin-json": "^3.1.0",
     "terser": "^3.8.2"
   }
 }

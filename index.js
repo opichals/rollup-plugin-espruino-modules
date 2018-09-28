@@ -1,4 +1,5 @@
 const commonjs = require('rollup-plugin-commonjs');
+const json = require('rollup-plugin-json');
 const espruino = require('rollup-plugin-espruino');
 
 const terser = require('./terser-sync-plugin').terser;
@@ -17,6 +18,7 @@ const defaultOptions = {
 
 const buildPlugins = (options) => [
     commonjs(),
+    json(),
     espruinoModules(options.espruino),
     options.output.minify === false ? { requireId: () => null } : terser({ // -- Espruino compatible options --
         toplevel: true,
