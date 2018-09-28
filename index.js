@@ -1,6 +1,7 @@
 const commonjs = require('rollup-plugin-commonjs');
-const terser = require('rollup-plugin-terser').terser;
 const espruino = require('rollup-plugin-espruino');
+
+const terser = require('./terser-sync-plugin').terser;
 const espruinoModules = require('./espruino-modules-plugin');
 
 
