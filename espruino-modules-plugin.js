@@ -69,7 +69,7 @@ function espruinoModules(options) {
             function stringifyModule({id, filename}) {
                 let code = fs.readFileSync(filename, 'utf8');
                 if (id.endsWith('.json')) {
-                    code = `module.exports=${code};`;
+                    code = `module.exports=${JSON.stringify(JSON.parse(code))};`;
                 }
                 return `Modules.addCached('${id}',function() {${spacer}${code}${spacer}})`;
             }
@@ -88,12 +88,17 @@ function espruinoModules(options) {
 
             // external modules (non-entry modules that start with neither '.' or '/')
             // are skipped at this stage.
-            if (importer === undefined) {
+            if (importer === undefined || importee === importer || importee.charAt(0) === '\0') {
                 return null;
             }
             if (path.isAbsolute(importee) || importee[0] === '.') {
                 const modulesPath = path.resolve(importee);
-                return plugin._resolves[modulesPath] || plugin.addModule(importee, modulesPath);
+                // FIXME: to add local modules via Modules.addCached the following would be
+                //        necessary but that basically requires resolving the path of any file
+                //        ust like the default rollup plugin TODO we should follow the
+                //        Espruino's esolution algorithm here (EspruinoTools:plugins/localModules.js)
+                // return plugin._resolves[modulesPath] || plugin.addModule(importee, modulesPath);
+                return plugin._resolves[modulesPath] || null;
             }
 
             return plugin._opts._boardJSON.then(boardJSON => {

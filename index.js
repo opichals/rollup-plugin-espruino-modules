@@ -3,8 +3,8 @@ const json = require('rollup-plugin-json');
 const espruino = require('rollup-plugin-espruino');
 
 const terser = require('./terser-sync-plugin').terser;
-const espruinoModules = require('./espruino-modules-plugin');
 const gitHubModules = require('./github-modules-plugin');
+const espruinoModules = require('./espruino-modules-plugin');
 
 
 const defaultOptions = {
@@ -18,10 +18,10 @@ const defaultOptions = {
 };
 
 const buildPlugins = (options) => [
-    commonjs(),
-    json(),
     gitHubModules(),
     espruinoModules(options.espruino),
+    json(),
+    commonjs(),
     options.espruino.minify === false ? { requireId: () => null } : terser({ // -- Espruino compatible options --
         toplevel: true,
         mangle: {

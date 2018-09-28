@@ -13,6 +13,9 @@ function gitHubModules(options) {
 
         resolveId(importee, importer) {
             // console.log('[github] resolve', importee, importer);
+            if (importer === undefined || importee === importer || importee.charAt(0) === '\0') {
+                return null;
+            }
 
             var match = importee && importee.match(/^https?:\/\/github.com\/([^\/]+)\/([^\/]+)\/blob\/([^\/]+)\/(.*)$/);
             if (!match) {
