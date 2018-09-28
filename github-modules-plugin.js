@@ -6,10 +6,14 @@ function gitHubModules(options) {
 	const plugin = {
         name: 'github-modules',
 
-        resolveId(importee, importer) {
-            console.log('RESOLVE', importee, importer);
+        buildStart() {
+            // pending resolves
+            plugin._resolves = {};
+        },
 
-            // https://github.com/opichals/rollup-plugin-espruino-modules/blob/master/espruino-tools.js
+        resolveId(importee, importer) {
+            // console.log('[github] resolve', importee, importer);
+
             var match = importee && importee.match(/^https?:\/\/github.com\/([^\/]+)\/([^\/]+)\/blob\/([^\/]+)\/(.*)$/);
             if (!match) {
                 return null;
@@ -26,7 +30,7 @@ function gitHubModules(options) {
             importee = git.owner+"/"+git.repo+"/"+git.branch+"/"+git.path;
             importee = 'github_'+importee.replace(/\//g, '-');
 
-            return new Promise((resolve, reject) => {
+            return plugin._resolves[importee] = plugin._resolves[importee] || new Promise((resolve, reject) => {
                 // check for modules/x.js
                 const modulesPath = path.resolve('./modules', importee);
                 fs.stat(modulesPath, function (err, stat) {
@@ -35,14 +39,14 @@ function gitHubModules(options) {
                         return;
                     }
 
-                    console.log(`FETCHING ${url}...`);
+                    console.log(`[github] fetching ${url}...`);
                     tools.httpGET(url, (err, source) => {
                         if (err) {
                             reject(err);
                             return;
                         }
 
-                        console.log('...RESOLVED', url);
+                        console.log(`[github] ...resolved ${url}`);
                         fs.writeFile(modulesPath, source, 'utf8', err => err
                             ? reject(err)
                             : resolve(modulesPath));
