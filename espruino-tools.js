@@ -30,6 +30,7 @@ const fetchEspruinoModule = function(moduleName, callback) {
 
 
 module.exports = {
+    httpGET,
     fetchEspruinoBoardJSON,
     fetchEspruinoModule
 };
