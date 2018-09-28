@@ -22,7 +22,7 @@ const buildPlugins = (options) => [
     json(),
     gitHubModules(),
     espruinoModules(options.espruino),
-    options.output.minify === false ? { requireId: () => null } : terser({ // -- Espruino compatible options --
+    options.espruino.minify === false ? { requireId: () => null } : terser({ // -- Espruino compatible options --
         toplevel: true,
         mangle: {
             reserved: ['onInit'],
@@ -59,7 +59,6 @@ const buildEspruinoConfig = (baseOptions) => {
     );
     opts.plugins = buildPlugins(opts);
     delete opts.espruino;
-    delete opts.output.minify;
     return opts;
 };
 
