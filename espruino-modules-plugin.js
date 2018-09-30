@@ -31,15 +31,20 @@ function espruinoModules(options) {
                 MODULE_PROXY_PORT: "",
             };
 
-            let boardName = options.board;
-            if (!boardName) {
+            let board = options.board;
+            if (!board) {
                 const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-                boardName = pkg.espruino && pkg.espruino.board;
+                board = pkg.espruino && pkg.espruino.board;
+            }
+            if (typeof board === 'object') {
+                plugin._opts._boardJSON = new Promise(resolve => resolve(board));
+                return;
             }
 
-            console.log('board: ', boardName );
+            console.log('board: ', board);
             plugin._opts._boardJSON = new Promise((resolve, reject) => {
-                const boardJSONPath = path.resolve('./modules', '.board_' + boardName + '.json');
+
+                const boardJSONPath = path.resolve('./modules', '.board_' + board + '.json');
                 fs.stat(boardJSONPath, function (err, stat) {
                     if (!err) {
                         const contents = fs.readFileSync(boardJSONPath, 'utf8');
@@ -47,7 +52,7 @@ function espruinoModules(options) {
                         return;
                     }
                     // ignore built-in modules
-                    tools.fetchEspruinoBoardJSON(boardName, options, (err, contents) => {
+                    tools.fetchEspruinoBoardJSON(board, options, (err, contents) => {
                         if (err) {
                             reject(err);
                             return;
