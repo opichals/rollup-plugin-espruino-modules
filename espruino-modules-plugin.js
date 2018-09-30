@@ -1,3 +1,5 @@
+const debug = require('debug')('espruino-modules');
+const debug_modules = require('debug')('espruino-modules:modules');
 const path = require('path');
 const fs = require('fs');
 const tools = require('./espruino-tools');
@@ -62,10 +64,10 @@ function espruinoModules(options) {
         },
 
         addModule(id, filename, resolver) {
-            console.log('addModule', id, plugin._resolves[filename]);
+            debug_modules('addModule', id, plugin._resolves[filename]);
 
             return plugin._resolves[filename] = plugin._resolves[filename] || resolver().then(() => {
-                console.log('module', id, filename);
+                debug_modules('module', id, filename);
 
                 if (!options.mergeModules) {
                     // treat as built-in (added via Modules.addCached)
@@ -96,7 +98,7 @@ function espruinoModules(options) {
         },
 
         resolveId(importee, importer) {
-            console.log('resolve', importee, importer);
+            debug('resolve', importee, importer);
 
             // external modules (non-entry modules that start with neither '.' or '/')
             // are skipped at this stage.
