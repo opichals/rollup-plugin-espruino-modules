@@ -88,7 +88,9 @@ function espruinoModules(options) {
                 return `Modules.addCached('${id}',function() {${spacer}${code}${spacer}})`;
             }
 
-            return plugin._modules.map(stringifyModule).join(spacer);
+            // \n needs to be in between the addCached() for later acorn.parse()
+            return plugin._modules.map(stringifyModule).join('\n') +
+                  (plugin._modules.length ? '\n' : '');
         },
 
         buildStart() {
@@ -164,7 +166,7 @@ function espruinoModules(options) {
                              (match, comma1, comma2) => (comma1 && comma2 ? comma2 : ''));
                 contents.code =
                     plugin.stringifyCachedModules(spacer) +
-                    (options.minify ? '' : spacer+spacer) +
+                    (options.minify ? '' : spacer) +
                     contents.code;
             });
         }
