@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const tools = require('./espruino-tools');
+const defaultResolver = require('./defaultResolver');
 
 function espruinoModules(options) {
 	const plugin = {
@@ -105,8 +106,18 @@ function espruinoModules(options) {
             }
 
             if (path.isAbsolute(importee) || importee[0] === '.') {
-                // no local module file via addCached
-                return null;
+                const modulesPath = defaultResolver(importee, importer);
+                if (typeof modulesPath !== 'string') {
+                    return modulesPath;
+                }
+
+                // resolved to a local module file
+                //
+                // FIXME!!! This doesn't work ad rollup doesn't finish for some reason when the modules
+                //          are reolved as built-in which is necessary when doing the Modules.addCached to leave
+                //          the require('./localmodule') in place
+                //
+                return plugin.addModule(importee, modulesPath, () => new Promise(resolve => resolve(modulesPath)));
             }
 
             return plugin._opts._boardJSON.then(boardJSON => {
