@@ -160,7 +160,8 @@ function espruinoModules(options) {
 
             Object.entries(bundle).forEach(([name, contents]) => {
                 contents.code = contents.code
-                    .replace(/,?\s*ESPRUINO_ROLLUP_MAIN\(\s*\(\)\s*=>\s*\{\s*onInit\(\);?\s*\}\s*\)/m, '');
+                    .replace(/(,?)\s*ESPRUINO_ROLLUP_MAIN\(\s*\(\)\s*=>\s*\{\s*onInit\(\);?\s*\}\s*\)\s*(,?)/m,
+                             (match, comma1, comma2) => (comma1 && comma2 ? comma2 : ''));
                 contents.code =
                     plugin.stringifyCachedModules(spacer) +
                     (options.minify ? '' : spacer+spacer) +
