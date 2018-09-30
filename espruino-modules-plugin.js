@@ -61,9 +61,21 @@ function espruinoModules(options) {
             return id === plugin._opts._input;
         },
 
-        addModule(id, filename) {
-            console.log('module', id, filename);
-            if (!options.mergeModules) plugin._modules.push({ id, filename });
+        addModule(id, filename, resolver) {
+            console.log('addModule', id, plugin._resolves[filename]);
+
+            return plugin._resolves[filename] = plugin._resolves[filename] || resolver().then(() => {
+                console.log('module', id, filename);
+
+                if (!options.mergeModules) {
+                    // treat as built-in (added via Modules.addCached)
+                    plugin._modules.push({ id, filename });
+                    //return filename;
+                    return false;
+                }
+
+                return filename;
+            });
         },
         stringifyCachedModules(spacer) {
             function stringifyModule({id, filename}) {
@@ -83,41 +95,35 @@ function espruinoModules(options) {
             plugin._resolves = {};
         },
 
-		resolveId(importee, importer) {
+        resolveId(importee, importer) {
             console.log('resolve', importee, importer);
 
             // external modules (non-entry modules that start with neither '.' or '/')
             // are skipped at this stage.
-            if (importer === undefined || importee === importer || importee.charAt(0) === '\0') {
+            if (importer === undefined || importee === importer || importee[0] === '\0') {
                 return null;
             }
+
             if (path.isAbsolute(importee) || importee[0] === '.') {
-                const modulesPath = path.resolve(importee);
-                // FIXME: to add local modules via Modules.addCached the following would be
-                //        necessary but that basically requires resolving the path of any file
-                //        ust like the default rollup plugin TODO we should follow the
-                //        Espruino's esolution algorithm here (EspruinoTools:plugins/localModules.js)
-                // return plugin._resolves[modulesPath] || plugin.addModule(importee, modulesPath);
-                return plugin._resolves[modulesPath] || null;
+                // no local module file via addCached
+                return null;
             }
 
             return plugin._opts._boardJSON.then(boardJSON => {
                 if (boardJSON.info.builtin_modules.indexOf(importee) >= 0) {
-                    // console.log('built-in', importee);
+                    // built-in module
                     return false;
                 }
 
                 // check for modules/x.js
                 const modulesPath = path.resolve('./modules', importee + '.js');
 
-                return plugin._resolves[modulesPath] = plugin._resolves[modulesPath] || new Promise((resolvePromise, reject) => {
-                    const resolve = (filename) =>
-                        resolvePromise(options.mergeModules ? filename : false);
-
-                    plugin.addModule(importee, modulesPath);
+                // module to be resolved from www.espruino.com/modules/
+                return plugin.addModule(importee, modulesPath, () => new Promise((resolve, reject) => {
 
                     fs.stat(modulesPath, function (err, stat) {
                         if (!err) {
+                            // module found in ./modules folder
                             resolve(modulesPath)
                             return;
                         }
@@ -125,17 +131,19 @@ function espruinoModules(options) {
                         console.log(`fetching ${importee}...`);
                         tools.fetchEspruinoModule(importee, options, (err, source) => {
                             if (err) {
+                                // not tound in www.espruino.com/modules/ or another network error
                                 reject(err);
                                 return;
                             }
 
                             console.log('...resolved', importee);
+                            // cache the module into ./modules folder
                             fs.writeFile(modulesPath, source, 'utf8', err => err
                                 ? reject(err)
                                 : resolve(modulesPath));
                         });
                     });
-                });
+                }));
             });
         },
 
