@@ -2,7 +2,7 @@ const commonjs = require('rollup-plugin-commonjs');
 const json = require('rollup-plugin-json');
 const espruino = require('rollup-plugin-espruino');
 
-const terser = require('./terser-sync-plugin').terser;
+const terser = require('./terser-sync-plugin');
 const gitHubModules = require('./github-modules-plugin');
 const espruinoModules = require('./espruino-modules-plugin');
 
@@ -17,12 +17,7 @@ const defaultOptions = {
     }
 };
 
-const buildPlugins = (options) => [
-    gitHubModules(),
-    espruinoModules(options.espruino),
-    json(),
-    commonjs(),
-    options.espruino.minify === false ? { requireId: () => null } : terser({ // -- Espruino compatible options --
+const defaultMinifyOptions = { // -- Espruino compatible options --
         toplevel: true,
         mangle: {
             reserved: ['onInit'],
@@ -41,7 +36,14 @@ const buildPlugins = (options) => [
         // -- debug disable minification --
         // , output: { beautify: true }
         // , mangle: false, compress: false
-    }),
+    };
+
+const buildPlugins = (options) => [
+    gitHubModules(),
+    espruinoModules(options.espruino),
+    json(),
+    commonjs(),
+    options.espruino.minify === false ? { requireId: () => null } : terser.terser(defaultMinifyOptions),
     // espruino({
     //     //port: 'aa:bb:cc:dd:ee', // or ['/dev/ttyX', 'aa:bb:cc:dd:ee']
     //     //setTime: true,
@@ -62,7 +64,17 @@ const buildEspruinoConfig = (baseOptions) => {
     return opts;
 };
 
+const buildEspruinoMinifyConfig = (options) => {
+    return {
+        ...defaultMinifyOptions,
+        ...options
+    };
+}
+
 module.exports = {
     buildEspruinoConfig,
-    espruinoModules
+    espruinoModules,
+
+    buildEspruinoMinifyConfig,
+    espruinoMinify: terser.minify
 };

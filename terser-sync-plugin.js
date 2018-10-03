@@ -69,4 +69,5 @@ function terser(userOptions = {}) {
   };
 }
 
+exports.minify = terserMinify;
 exports.terser = terser;
