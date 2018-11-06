@@ -166,9 +166,16 @@ function espruinoModules(options) {
             const spacer = options.minifyModules === false?'\n':'';
 
             Object.entries(bundle).forEach(([name, contents]) => {
+                // strip the ESPRUINO_ROLLUP_MAIN() call added to entry chunk by transform
+                // to ensures the onInit() is never dropped as unused
                 contents.code = contents.code
                     .replace(/(,?)\s*ESPRUINO_ROLLUP_MAIN\(\s*\(\)\s*=>\s*\{\s*onInit\(\);?\s*\}\s*\)\s*(,?)/m,
-                             (match, comma1, comma2) => (comma1 && comma2 ? comma2 : ''));
+                             (match, comma1, comma2) => (comma1 && comma2 ? ',' : ''));
+
+                // remove the entry chunk module.exports added by the rollup-plugin-commonjs
+                contents.code = contents.code
+                    .replace(/[\s,]*module.exports\s*=\s*\S+;/m, '');
+
                 contents.code =
                     plugin.stringifyCachedModules(spacer) +
                     (options.minify ? '' : spacer) +

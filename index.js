@@ -17,18 +17,23 @@ const defaultOptions = {
     }
 };
 
-const defaultMinifyOptions = { // -- Espruino compatible options --
+const defaultMinifyOptions = { // -- terser, Espruino compatible options --
         toplevel: true,
         mangle: {
             reserved: ['onInit'],
         },
         compress: {
-            passes: 3,
-            ecma: 5,
-            keep_fnames: true, // to keep onInit
-            reduce_funcs: false,
-            inline: 0,
+            unused: true,
             dead_code: true,
+            passes: 3,
+
+            inline: 0,
+            top_retain: ['onInit'],
+            keep_fnames: true,  // to Function.name
+            reduce_funcs: false,
+            reduce_vars: false, // not to duplicate onInit function body when top_retain
+
+            ecma: 5,
             global_defs: {
                 DEBUG: false
             }
