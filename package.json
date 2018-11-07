@@ -8,7 +8,7 @@
   "dependencies": {
     "@babel/code-frame": "^7.0.0",
     "debug": "^4.0.1",
-    "rollup-plugin-commonjs": "^9.1.6",
+    "rollup-plugin-commonjs": "github:opichals/rollup-plugin-commonjs#no-export-default-if-none-found",
     "rollup-plugin-espruino": "^0.2.1",
     "rollup-plugin-json": "^3.1.0",
     "terser": "^3.8.2"

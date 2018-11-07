@@ -172,10 +172,6 @@ function espruinoModules(options) {
                     .replace(/(,?)\s*ESPRUINO_ROLLUP_MAIN\(\s*\(\)\s*=>\s*\{\s*onInit\(\);?\s*\}\s*\)\s*(,?)/m,
                              (match, comma1, comma2) => (comma1 && comma2 ? ',' : ''));
 
-                // remove the entry chunk module.exports added by the rollup-plugin-commonjs
-                contents.code = contents.code
-                    .replace(/[\s,]*module.exports\s*=\s*\S+;/m, '');
-
                 contents.code =
                     plugin.stringifyCachedModules(spacer) +
                     (options.minify ? '' : spacer) +
