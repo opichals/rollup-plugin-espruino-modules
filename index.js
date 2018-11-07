@@ -1,6 +1,5 @@
 const commonjs = require('rollup-plugin-commonjs');
 const json = require('rollup-plugin-json');
-const espruino = require('rollup-plugin-espruino');
 
 const terser = require('./terser-sync-plugin');
 const gitHubModules = require('./github-modules-plugin');
@@ -48,11 +47,6 @@ const buildPlugins = (options) => [
     json(),
     commonjs(),
     options.espruino.minify === false ? { requireId: () => null } : terser.terser(defaultMinifyOptions),
-    // espruino({
-    //     //port: 'aa:bb:cc:dd:ee', // or ['/dev/ttyX', 'aa:bb:cc:dd:ee']
-    //     //setTime: true,
-    //     //save: true,
-    // })
 ];
 
 const buildEspruinoConfig = (baseOptions) => {
