@@ -10,20 +10,12 @@ function espruinoModules(options) {
         options: function(opts) {
             plugin._opts = opts;
             plugin._opts._input = path.resolve(opts.input);
-            options.job = {
+            options.job = opts.job || {
                 MODULE_URL: "https://www.espruino.com/modules",
                 BOARD_JSON_URL: "https://www.espruino.com/json",
                 MODULE_EXTENSIONS: ".min.js|.js",
 
-                // options.mergeModules
-                //  - no Modules.addCached()
-                // options.minify
-                //  - minify the app code
-                // options.minifyModules
-                //  - download minifed modules
-
-                // ?
-                MODULE_AS_FUNCTION: false,
+                MODULE_AS_FUNCTION: true,
 
                 // TODO: add proxy setup for the local espruino-tools/httpGET
                 MODULE_PROXY_ENABLED: false,
@@ -31,12 +23,29 @@ function espruinoModules(options) {
                 MODULE_PROXY_PORT: "",
             };
 
+            // no Modules.addCached()
+            if (options.mergeModules === undefined) {
+                options.mergeModules  = !!options.job.MODULE_MERGE;
+            }
+            // minify the app code
+            if (options.minify === undefined) {
+                options.minify = !!options.job.MINIFICATION_LEVEL;
+            }
+            // download minifed modules
+            if (options.minifyModules === undefined) {
+                options.minifyModules = !!options.job.MODULE_MINIFICATION_LEVEL;
+            }
+
+            let firmwareVersion = options.version;
+
             let board = options.board;
             if (!board) {
+                // custom, try package.json#espruino.board
                 const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
                 board = pkg.espruino && pkg.espruino.board;
             }
             if (typeof board === 'object') {
+                // options.board considered to be the parsed board JSON file
                 plugin._opts._boardJSON = new Promise(resolve => resolve(board));
                 return;
             }
