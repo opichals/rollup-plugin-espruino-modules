@@ -31,7 +31,6 @@ const defaultMinifyOptions = { // -- terser, Espruino compatible options --
             top_retain: ['onInit'],
             keep_fnames: true,  // to Function.name
             reduce_funcs: false,
-            reduce_vars: false, // not to duplicate onInit function body when top_retain
 
             ecma: 5,
             global_defs: {
