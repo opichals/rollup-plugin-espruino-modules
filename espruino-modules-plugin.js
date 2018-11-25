@@ -41,8 +41,12 @@ function espruinoModules(options) {
             let board = options.board;
             if (!board) {
                 // custom, try package.json#espruino.board
-                const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-                board = pkg.espruino && pkg.espruino.board;
+                try {
+                    const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+                    board = pkg.espruino && pkg.espruino.board;
+                } catch(e) {
+                    // fallthrough
+                }
             }
             if (typeof board === 'object') {
                 // options.board considered to be the parsed board JSON file
