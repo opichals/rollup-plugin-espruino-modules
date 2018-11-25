@@ -171,7 +171,7 @@ function espruinoModules(options) {
 
         transform(code, id) {
             if (plugin.isEntryId(id)) {
-                code += `ESPRUINO_ROLLUP_MAIN(() => { onInit(); });`;
+                code += `\n;ESPRUINO__ROLLUP_MAIN(() => onInit())`;
             }
             return code;
         },
@@ -179,16 +179,18 @@ function espruinoModules(options) {
             const spacer = options.minifyModules === false?'\n':'';
 
             Object.entries(bundle).forEach(([name, contents]) => {
-                // strip the ESPRUINO_ROLLUP_MAIN() call added to entry chunk by transform
+                // strip the ESPRUINO__ROLLUP_MAIN() call added to entry chunk by transform
                 // to ensures the onInit() is never dropped as unused
                 contents.code = contents.code
-                    .replace(/(,?)\s*ESPRUINO_ROLLUP_MAIN\(\s*\(\)\s*=>\s*\{\s*onInit\(\);?\s*\}\s*\)\s*(,?)/m,
+                    .replace(/(,?)\s*ESPRUINO__ROLLUP_MAIN\(\s*\(\)\s*=>\s*onInit\(\)\s*\)\s*([;,]?)/m,
                              (match, comma1, comma2) => (comma1 && comma2 ? ',' : ''));
 
                 contents.code =
                     plugin.stringifyCachedModules(spacer) +
-                    (options.minify ? '' : spacer) +
-                    contents.code;
+                    (options.minify
+                        ? contents.code.trim()
+                        : spacer + contents.code
+                    )
             });
         }
     };

@@ -5,7 +5,7 @@ const httpGET = (url, callback) => https.get(url, res => {
 
     let error;
     if (statusCode !== 200) {
-        error = new Error('Request Failed.\nStatus Code: ' + statusCode);
+        error = new Error(`Getting ${url}\nStatus Code: ${statusCode}`);
     }
     if (error) {
         res.resume();
