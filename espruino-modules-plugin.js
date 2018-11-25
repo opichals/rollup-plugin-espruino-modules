@@ -82,15 +82,19 @@ function espruinoModules(options) {
         },
 
         addModule(id, filename, resolver) {
-            debug_modules('addModule', id, plugin._resolves[filename]);
+            const pending = plugin._resolves[filename];
+            if (pending) {
+                return pending;
+            }
 
-            return plugin._resolves[filename] = plugin._resolves[filename] || resolver().then(() => {
+            debug_modules('addModule', id);
+
+            return plugin._resolves[filename] = resolver().then(() => {
                 debug_modules('module', id, filename);
 
                 if (!options.mergeModules) {
                     // treat as built-in (added via Modules.addCached)
                     plugin._modules.push({ id, filename });
-                    //return filename;
                     return false;
                 }
 
@@ -113,6 +117,7 @@ function espruinoModules(options) {
 
         buildStart() {
             plugin._modules = [];
+
             // pending resolves
             plugin._resolves = {};
         },
