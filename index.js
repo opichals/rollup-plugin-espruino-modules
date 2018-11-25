@@ -46,23 +46,22 @@ const buildPlugins = (options) => [
     espruinoModules(options.espruino),
     json(),
     commonjs(),
-    options.espruino.minify === false ? { requireId: () => null } : terser.terser(defaultMinifyOptions),
+    options.espruino.minify === false ? { requireId: () => null } : terser.plugin(defaultMinifyOptions),
 ];
 
-const buildEspruinoConfig = (baseOptions) => {
-    const output = baseOptions.output;
-    const defaultOutput = defaultOptions.output;
+const buildRollupConfig = (baseOptions) => {
     const opts = Object.assign({},
         defaultOptions,
         baseOptions,
-        { output: { ...defaultOutput, ...output } }
+        { output: { ...defaultOptions.output, ...baseOptions.output } }
     );
+    opts.espruino = opts.espruino || {};
     opts.plugins = buildPlugins(opts);
     delete opts.espruino;
     return opts;
 };
 
-const buildEspruinoMinifyConfig = (options) => {
+const buildMinifyConfig = (options) => {
     return {
         ...defaultMinifyOptions,
         ...options
@@ -70,9 +69,10 @@ const buildEspruinoMinifyConfig = (options) => {
 }
 
 module.exports = {
-    buildEspruinoConfig,
     espruinoModules,
 
-    buildEspruinoMinifyConfig,
-    espruinoMinify: terser.minify
+    buildRollupConfig,
+    buildMinifyConfig,
+
+    minify: terser.minify
 };

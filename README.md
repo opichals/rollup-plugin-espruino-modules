@@ -6,9 +6,9 @@ Espruino Rollup Support
 `rollup.config.js` use
 
 ```
-import { buildEspruinoConfig } from 'rollup-plugin-espruino-modules';
+import { buildRollupConfig } from 'rollup-plugin-espruino-modules';
 
-export default buildEspruinoConfig({
+export default buildRollupConfig({
   input: 'src/entry.js',
   output: {
     file: 'bundle.js',
