@@ -65,15 +65,14 @@ function espruinoModules(options) {
                         return;
                     }
                     // ignore built-in modules
-                    tools.fetchEspruinoBoardJSON(board, options, (err, contents) => {
-                        if (err) {
-                            reject(err);
-                            return;
-                        }
-                        fs.writeFile(boardJSONPath, contents, 'utf8', err => err
-                            ? reject(err)
-                            : resolve(contents));
-                    });
+                    tools.fetchEspruinoBoardJSON(board, options)
+                    .then(contents => {
+                        fs.writeFile(boardJSONPath, contents, 'utf8', err => {
+                            if (err) throw err;
+                            resolve(contents);
+                        });
+                    })
+                    .catch(err => reject(err));
                 });
             }).then(json => JSON.parse(json));
         },
@@ -156,19 +155,17 @@ function espruinoModules(options) {
                         }
 
                         console.log(`fetching ${importee}...`);
-                        tools.fetchEspruinoModule(importee, options, (err, source) => {
-                            if (err) {
-                                // not tound in www.espruino.com/modules/ or another network error
-                                reject(err);
-                                return;
-                            }
-
+                        tools.fetchEspruinoModule(importee, options)
+                        .then(source => {
                             console.log('...resolved', importee);
                             // cache the module into ./modules folder
-                            fs.writeFile(modulesPath, source, 'utf8', err => err
-                                ? reject(err)
-                                : resolve(modulesPath));
-                        });
+                            fs.writeFile(modulesPath, source, 'utf8', err => {
+                                if (err) throw err;
+                                resolve(modulesPath);
+                            });
+                        })
+                        // not tound in www.espruino.com/modules/ or another network error
+                        .catch(err => reject(err));
                     });
                 }));
             });
