@@ -188,7 +188,7 @@ function espruinoModules(options) {
                 // to ensures the onInit() is never dropped as unused
                 contents.code = contents.code
                     .replace(/(,?)\s*ESPRUINO__ROLLUP_MAIN\(\s*\(\)\s*=>\s*onInit\(\)\s*\)\s*([;,]?)/m,
-                             (match, comma1, comma2) => (comma1 && comma2 ? ',' : ''));
+                             (match, comma1, comma2) => (comma1 && comma2 ? comma2 : ''));
 
                 contents.code =
                     plugin.stringifyCachedModules(spacer) +
