@@ -1,6 +1,6 @@
 const https = require('https');
 
-const httpGET = (url) => new Promise((resolve, reject) => https.get(url, res => {
+const httpGetUrl = (url) => new Promise((resolve, reject) => https.get(url, res => {
     const { statusCode } = res;
 
     let error;
@@ -20,15 +20,17 @@ const httpGET = (url) => new Promise((resolve, reject) => https.get(url, res => 
     res.on('end', () => resolve(rawData));
 }));
 
-const fetchEspruinoBoardJSON = function(boardName, options) {
-    const boardJsonUrl = options.job.BOARD_JSON_URL || "http://www.espruino.com/json";
-    const url =  `${boardJsonUrl}/${boardName}.json`;
-
+const httpGET = (url, options) => {
     const getURL = options.externals && options.externals.getURL;
-    return getURL ? getURL(url) : httpGET(url);
+    return getURL ? getURL(url) : httpGetUrl(url);
 };
 
-const fetchEspruinoModule = function(moduleName, options) {
+const fetchEspruinoBoardJSON = (boardName, options) => {
+    const boardJsonUrl = options.job.BOARD_JSON_URL || "http://www.espruino.com/json";
+    return httpGET(`${boardJsonUrl}/${boardName}.json`, options);
+};
+
+const fetchEspruinoModule = (moduleName, options) => {
     const getModule = options.externals && options.externals.getModule;
     if (getModule) {
         return getModule(moduleName);
@@ -38,9 +40,9 @@ const fetchEspruinoModule = function(moduleName, options) {
     const moduleExts = options.job.MODULE_EXTENSIONS.split('|')
         .filter(ext => !(options.minifyModules === false && ext.match('min.js')));
 
-    function fetchModule(exts) {
+    const fetchModule = exts => {
         const ext = exts.shift();
-        return httpGET(`${moduleUrl}/${moduleName}${ext}`).catch(err => {
+        return httpGET(`${moduleUrl}/${moduleName}${ext}`, options).catch(err => {
             if (exts.length) {
                 return fetchModule(exts);
             }

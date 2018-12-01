@@ -43,17 +43,15 @@ function gitHubModules(options) {
                     }
 
                     console.log(`[github] fetching ${url}...`);
-                    tools.httpGET(url, (err, source) => {
-                        if (err) {
-                            reject(err);
-                            return;
-                        }
-
+                    tools.httpGET(url, options)
+                    .then(source => {
                         console.log(`[github] ...resolved ${url}`);
-                        fs.writeFile(modulesPath, source, 'utf8', err => err
-                            ? reject(err)
-                            : resolve(modulesPath));
-                    });
+                        fs.writeFile(modulesPath, source, 'utf8', err => {
+                            if (err) throw err;
+                            resolve(modulesPath);
+                        });
+                    })
+                    .catch(err => reject(err));
                 });
             });
         },

@@ -56,7 +56,7 @@ const buildMinifyConfig = (options) => {
 };
 
 const buildPlugins = (options) => [
-    gitHubModules(),
+    gitHubModules(options.espruino),
     espruinoModules(options.espruino),
     json(),
     commonjs(),
