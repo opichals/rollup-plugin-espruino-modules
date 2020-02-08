@@ -7,8 +7,8 @@
   "license": "MIT",
   "dependencies": {
     "debug": "^4.0.1",
-    "rollup-plugin-commonjs": "github:opichals/rollup-plugin-commonjs#no-export-default-if-none-found",
-    "rollup-plugin-json": "^3.1.0",
+    "@rollup/plugin-commonjs": "^11.0.2",
+    "@rollup/plugin-json": "^4.0.2",
     "terser": "^3.11.0"
   }
 }

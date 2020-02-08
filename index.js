@@ -1,5 +1,5 @@
-const commonjs = require('rollup-plugin-commonjs');
-const json = require('rollup-plugin-json');
+const commonjs = require('@rollup/plugin-commonjs');
+const json = require('@rollup/plugin-json');
 const { minify: minifier } = require("terser");
 
 const gitHubModules = require('./github-modules-plugin');
