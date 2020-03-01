@@ -1,10 +1,11 @@
 {
   "name": "rollup-plugin-espruino-modules",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Espruino Rollup Toolchain",
   "main": "index.js",
   "author": "opichals@gmail.com",
   "license": "MIT",
+  "repository": "opichals/rollup-plugin-espruino-modules",
   "dependencies": {
     "debug": "^4.0.1",
     "@rollup/plugin-commonjs": "^11.0.2",
