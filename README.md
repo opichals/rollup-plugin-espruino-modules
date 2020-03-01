@@ -1,9 +1,6 @@
-# rollup-plugin-espruino-modules
+## Espruino Rollup Support *rollup-plugin-espruino-modules*
 
-Espruino Rollup Support
-
-
-`rollup.config.js` use
+Use from `rollup.config.js` use
 
 ```
 import { buildRollupConfig } from 'rollup-plugin-espruino-modules';

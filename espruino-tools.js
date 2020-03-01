@@ -42,6 +42,7 @@ const fetchEspruinoModule = (moduleName, options) => {
 
     const fetchModule = exts => {
         const ext = exts.shift();
+
         return httpGET(`${moduleUrl}/${moduleName}${ext}`, options).catch(err => {
             if (exts.length) {
                 return fetchModule(exts);

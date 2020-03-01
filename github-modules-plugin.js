@@ -3,7 +3,7 @@ const fs = require('fs');
 const tools = require('./espruino-tools');
 
 function gitHubModules(options) {
-	const plugin = {
+    const plugin = {
         name: 'github-modules',
 
         buildStart() {

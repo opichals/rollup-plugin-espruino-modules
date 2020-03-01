@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-espruino-modules",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "description": "Espruino Rollup Toolchain",
   "main": "index.js",
   "author": "opichals@gmail.com",
