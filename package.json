@@ -7,9 +7,9 @@
   "license": "MIT",
   "repository": "opichals/rollup-plugin-espruino-modules",
   "dependencies": {
-    "debug": "^4.0.1",
     "@rollup/plugin-commonjs": "^11.0.2",
     "@rollup/plugin-json": "^4.0.2",
-    "terser": "^3.11.0"
+    "debug": "^4.0.1",
+    "terser": "^4.8.1"
   }
 }
