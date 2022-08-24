@@ -9,6 +9,6 @@
     "debug": "^4.0.1",
     "rollup-plugin-commonjs": "github:opichals/rollup-plugin-commonjs#no-export-default-if-none-found",
     "rollup-plugin-json": "^3.1.0",
-    "terser": "^3.11.0"
+    "terser": "^4.8.1"
   }
 }
